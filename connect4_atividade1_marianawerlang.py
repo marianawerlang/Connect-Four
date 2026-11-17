@@ -141,3 +141,81 @@ def jogada_inteligente(tabuleiro, peca_pc, peca_humano):
             return coluna_central
 
     return random.choice(colunas_validas)
+
+
+def main():
+    # Raciocínio: Função principal para organizar o fluxo do jogo, inicializar variáveis
+    # e gerenciar o loop (while) de turnos.
+    print("--- CONNECT FOUR (LIG 4) ---")
+    print("Escolha o modo de jogo:")
+    print("1 - Humano x Humano")
+    print("2 - Humano x Computador (Fácil - Aleatório)")
+    print("3 - Humano x Computador (Difícil - Inteligente)")
+    
+    modo = ""
+    while modo not in ['1', '2', '3']:
+        modo = input("Digite 1, 2 ou 3: ")
+
+    jogar_contra_computador_facil = (modo == '2')
+    jogar_contra_computador_dificil = (modo == '3')
+    
+    tabuleiro = criar_tabuleiro()
+    jogo_ativo = True
+    turno = 0 # Usamos 0 para X e 1 para O. Ajuda a alternar os jogadores usando modulação (%).
+
+    imprimir_tabuleiro(tabuleiro)
+
+    while jogo_ativo:
+        # Define qual é o jogador da vez
+        if turno == 0:
+            peca = JOGADOR_1
+            nome_jogador = "Jogador 1 (X)"
+        else:
+            peca = JOGADOR_2
+            if jogar_contra_computador_facil or jogar_contra_computador_dificil:
+                nome_jogador = "Computador (O)"
+            else:
+                nome_jogador = "Jogador 2 (O)"
+
+        # Coleta a jogada do Computador (turno 1)
+        if turno == 1 and (jogar_contra_computador_facil or jogar_contra_computador_dificil):
+            if jogar_contra_computador_dificil:
+                col = jogada_inteligente(tabuleiro, JOGADOR_2, JOGADOR_1)
+            else:
+                # O computador fácil escolhe apenas entre colunas que não estão cheias
+                colunas_validas = [c for c in range(COLUNAS) if coluna_valida(tabuleiro, c)]
+                col = random.choice(colunas_validas)
+            
+            print(f"\nO {nome_jogador} escolheu a coluna {col}.")
+        else:
+            # Coleta a jogada do Humano com tratamento de erros (try/except)
+            try:
+                col = int(input(f"\n{nome_jogador}, escolha a coluna (0-6): "))
+                if col < 0 or col > 6:
+                    print("Erro: Coluna inválida. Digite um número entre 0 e 6.")
+                    continue
+                if not coluna_valida(tabuleiro, col):
+                    print("Erro: Coluna cheia! Por favor, escolha outra coluna.")
+                    continue
+            except ValueError:
+                print("Erro: Entrada inválida. Digite um número inteiro.")
+                continue
+
+        # Insere a peça usando a lógica de gravidade e exibe
+        linha = obter_linha_disponivel(tabuleiro, col)
+        inserir_peca(tabuleiro, linha, col, peca)
+        imprimir_tabuleiro(tabuleiro)
+
+        # Checa se o jogo acabou nesta jogada (Vitória ou Empate)
+        if verificar_vitoria(tabuleiro, peca):
+            print(f"Vitória! O {nome_jogador} venceu a partida!")
+            jogo_ativo = False
+        elif tabuleiro_cheio(tabuleiro):
+            print("Empate! O tabuleiro encheu e nenhum jogador venceu.")
+            jogo_ativo = False
+
+        # Alterna o turno (0 vira 1, 1 vira 0)
+        turno = (turno + 1) % 2
+
+if __name__ == "__main__":
+    main()
