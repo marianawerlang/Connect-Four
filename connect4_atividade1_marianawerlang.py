@@ -61,3 +61,46 @@ def inserir_peca(tabuleiro, linha, col, peca):
     # Raciocínio: Apenas atualiza a matriz do tabuleiro na posição (linha, coluna)
     # com a peça do jogador da vez ('X' ou 'O').
     tabuleiro[linha][col] = peca
+
+def verificar_vitoria(tabuleiro, peca):
+    # Raciocínio: Precisamos checar todas as direções possíveis. 
+    # Em vez de olhar o tabuleiro todo para cada direção, limitamos os laços 'for' 
+    # (ex: COLUNAS - 3) para evitar erros de "Index Out of Range" ao buscar 4 posições à frente.
+    
+    # 1. Horizontal
+    for c in range(COLUNAS - 3):
+        for r in range(LINHAS):
+            if tabuleiro[r][c] == peca and tabuleiro[r][c+1] == peca and \
+               tabuleiro[r][c+2] == peca and tabuleiro[r][c+3] == peca:
+                return True
+
+    # 2. Vertical
+    for c in range(COLUNAS):
+        for r in range(LINHAS - 3):
+            if tabuleiro[r][c] == peca and tabuleiro[r+1][c] == peca and \
+               tabuleiro[r+2][c] == peca and tabuleiro[r+3][c] == peca:
+                return True
+
+    # 3. Diagonal Positiva (\)
+    for c in range(COLUNAS - 3):
+        for r in range(LINHAS - 3):
+            if tabuleiro[r][c] == peca and tabuleiro[r+1][c+1] == peca and \
+               tabuleiro[r+2][c+2] == peca and tabuleiro[r+3][c+3] == peca:
+                return True
+
+    # 4. Diagonal Negativa (/)
+    for c in range(COLUNAS - 3):
+        for r in range(3, LINHAS):
+            if tabuleiro[r][c] == peca and tabuleiro[r-1][c+1] == peca and \
+               tabuleiro[r-2][c+2] == peca and tabuleiro[r-3][c+3] == peca:
+                return True
+
+    return False
+
+def tabuleiro_cheio(tabuleiro):
+    # Raciocínio: O jogo empata se ninguém vencer e não houver mais espaços.
+    # Novamente, basta verificar se o topo (linha 0) de todas as colunas está ocupado.
+    for c in range(COLUNAS):
+        if tabuleiro[0][c] == VAZIO:
+            return False
+    return True
