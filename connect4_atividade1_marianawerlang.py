@@ -43,3 +43,21 @@ def imprimir_tabuleiro(tabuleiro):
     for linha in tabuleiro:
         print(" ".join(linha))
     print()
+
+def coluna_valida(tabuleiro, col):
+    # Raciocínio: Como as peças caem (gravidade), a última posição a ser preenchida
+    # em uma coluna é sempre a linha 0 (o topo). Se a linha 0 estiver vazia, a coluna tem espaço.
+    return tabuleiro[0][col] == VAZIO
+
+def obter_linha_disponivel(tabuleiro, col):
+    # Raciocínio: Para simular a gravidade, precisamos verificar a coluna de baixo para cima.
+    # Por isso o 'for' começa na última linha (LINHAS - 1) e vai diminuindo até a linha 0.
+    for r in range(LINHAS - 1, -1, -1):
+        if tabuleiro[r][col] == VAZIO:
+            return r
+    return -1
+
+def inserir_peca(tabuleiro, linha, col, peca):
+    # Raciocínio: Apenas atualiza a matriz do tabuleiro na posição (linha, coluna)
+    # com a peça do jogador da vez ('X' ou 'O').
+    tabuleiro[linha][col] = peca
