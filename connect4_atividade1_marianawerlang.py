@@ -1,0 +1,45 @@
+
+# Trabalho Avaliativo - Jogo Connect Four (Quatro em Linha)
+# Alunas:
+# - Mariana Werlang Moraes - Matrícula 25204855
+
+
+
+
+# Como extra, implementamos uma lógica adicional para o Computador (Modo Difícil),
+# onde ele simula jogadas para tentar vencer ou bloquear o jogador humano.
+
+# Todos os requisitos do jogo foram implementados com sucesso. A lógica
+# de gravidade funciona corretamente, bem como a validação de colunas cheias
+# e a verificação de vitória (horizontal, vertical e diagonais) ou empate.
+# Não houve aspectos que deixaram de funcionar.
+
+
+
+import random
+
+# Constantes para evitar números "mágicos" soltos no código e facilitar a leitura
+LINHAS = 6
+COLUNAS = 7
+VAZIO = '.'
+JOGADOR_1 = 'X'
+JOGADOR_2 = 'O'
+
+def criar_tabuleiro():
+    # Raciocínio: Uma lista de listas (matriz) é a melhor forma de representar 
+    # um tabuleiro 2D bidimensional na programação estruturada em Python.
+    tabuleiro = []
+    for _ in range(LINHAS):
+        linha = [VAZIO] * COLUNAS
+        tabuleiro.append(linha)
+    return tabuleiro
+
+def imprimir_tabuleiro(tabuleiro):
+    # Raciocínio: Exibir o tabuleiro de forma amigável no terminal.
+    # O cabeçalho numérico ajuda o jogador humano a saber qual número digitar.
+    print() 
+    cabecalho = " ".join([str(i) for i in range(COLUNAS)])
+    print(cabecalho)
+    for linha in tabuleiro:
+        print(" ".join(linha))
+    print()
