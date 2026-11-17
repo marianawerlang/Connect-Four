@@ -104,3 +104,40 @@ def tabuleiro_cheio(tabuleiro):
         if tabuleiro[0][c] == VAZIO:
             return False
     return True
+
+# FUNÇÕES EXTRAS PARA A INTELIGÊNCIA DO COMPUTADOR (MODO DIFÍCIL) 
+
+def simular_jogada_vitoria(tabuleiro, col, peca):
+    # Raciocínio: Esta função permite que o computador "pense" no futuro.
+    # Ele coloca a peça temporariamente em uma coluna, verifica se essa jogada 
+    # resulta em vitória e, logo em seguida, apaga a peça (desfaz a jogada).
+    linha = obter_linha_disponivel(tabuleiro, col)
+    inserir_peca(tabuleiro, linha, col, peca)
+    venceu = verificar_vitoria(tabuleiro, peca)
+    inserir_peca(tabuleiro, linha, col, VAZIO) # Desfaz a jogada para não afetar o jogo real
+    return venceu
+
+def jogada_inteligente(tabuleiro, peca_pc, peca_humano):
+    # Raciocínio da Inteligência: É uma árvore de decisão de 3 passos:
+    # 1º - Ataque: Simula jogar em todas as colunas para ver se ganha o jogo agora. Se sim, joga lá.
+    # 2º - Defesa: Se não pode ganhar agora, simula as jogadas do Humano. Se o humano for ganhar na próxima, bloqueia a jogada.
+    # 3º - Estratégia/Aleatório: Se não há ataque ou defesa urgente, tenta jogar no meio (onde há mais chances de criar diagonais) ou joga aleatoriamente.
+    colunas_validas = [c for c in range(COLUNAS) if coluna_valida(tabuleiro, c)]
+
+    # Passo 1: Ataque
+    for col in colunas_validas:
+        if simular_jogada_vitoria(tabuleiro, col, peca_pc):
+            return col
+
+    # Passo 2: Defesa
+    for col in colunas_validas:
+        if simular_jogada_vitoria(tabuleiro, col, peca_humano):
+            return col
+
+    # Passo 3: Padrão (Prioriza o centro ou escolhe aleatório)
+    coluna_central = COLUNAS // 2
+    if coluna_central in colunas_validas:
+        if random.random() < 0.6: 
+            return coluna_central
+
+    return random.choice(colunas_validas)
